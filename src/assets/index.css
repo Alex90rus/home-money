@@ -38,8 +38,8 @@
   position: absolute;
   top: 64px;
   width: 250px;
-  transition: transform .3s;
-  transition: transform .3s, -webkit-transform .3s;
+  transition: transform .1s;
+  transition: transform .1s, -webkit-transform .1s;
   bottom: 0 !important;
   height: auto !important
 }

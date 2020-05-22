@@ -40,6 +40,25 @@
          символов (Сейчас он {{password
          .length}})</small>
       </div>
+      <div class="input-field">
+        <input
+          id="name"
+          type="text"
+          v-model.trim="name"
+          :class="{invalid: $v.name.$dirty && !$v.name.required}"
+        >
+        <label for="name">Имя</label>
+        <small
+          class="helper-text invalid"
+          v-if="$v.name.$dirty && !$v.name.required"
+        >Введите Ваше имя</small>
+      </div>
+      <p>
+        <label>
+          <input type="checkbox" v-model="agree" />
+          <span>С правилами согласен</span>
+        </label>
+      </p>
     </div>
     <div class="card-action">
       <div>
@@ -47,40 +66,37 @@
           class="btn waves-effect waves-light auth-submit"
           type="submit"
         >
-          Войти
+          Зарегистрироваться
           <i class="material-icons right">send</i>
         </button>
       </div>
 
       <p class="center">
-        Нет аккаунта?
-        <router-link to="/register">Зарегистрироваться</router-link>
+        Уже есть аккаунт?
+        <router-link to="/login">Войти!</router-link>
       </p>
     </div>
   </form>
 </template>
-
 <script>
 import { email, required, minLength } from 'vuelidate/lib/validators';
-import messages from '../utils/messages';
 
 export default {
-  name: 'login',
+  name: 'register',
   data: () => ({
     email: '',
     password: '',
+    name: '',
+    agree: false,
   }),
   validations: {
     email: { email, required },
     password: { required, minLength: minLength(8) },
-  },
-  mounted() {
-    if (messages[this.$route.query.message]) {
-      this.$message(messages[this.$route.query.message]);
-    }
+    name: { required },
+    agree: { checked: (v) => v },
   },
   methods: {
-    async submitHandler() {
+    submitHandler() {
       if (this.$v.$invalid) {
         this.$v.$touch();
         return;
@@ -88,13 +104,10 @@ export default {
       const formData = {
         email: this.email,
         password: this.password,
+        name: this.name,
       };
-
-      try {
-        await this.$store.dispatch('login', formData);
-        this.$router.push('/');
-        // eslint-disable-next-line no-empty
-      } catch (e) { }
+      console.log(formData);
+      this.$router.push('/');
     },
   },
 };
