@@ -16,7 +16,7 @@
             data-target="dropdown"
             ref="dropdown"
           >
-            USER NAME
+            {{name}}
             <i class="material-icons right">arrow_drop_down</i>
           </a>
 
@@ -42,6 +42,7 @@
 <script>
 import M from 'materialize-css';
 
+
 export default {
   data: () => ({
     date: new Date(),
@@ -49,9 +50,14 @@ export default {
     dropdown: null,
   }),
   methods: {
-    logout() {
-      console.log('logout');
-      this.$router.push('/login?message=logout');
+    async logout() {
+      await this.$store.dispatch('logout');
+      await this.$router.push('/login?message=logout');
+    },
+  },
+  computed: {
+    name() {
+      return this.$store.getters.info.name;
     },
   },
   mounted() {

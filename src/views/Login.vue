@@ -64,15 +64,18 @@
 import { email, required, minLength } from 'vuelidate/lib/validators';
 import messages from '../utils/messages';
 
+
 export default {
+
   name: 'login',
   data: () => ({
     email: '',
     password: '',
+    vError: '',
   }),
   validations: {
     email: { email, required },
-    password: { required, minLength: minLength(8) },
+    password: { required, minLength: minLength(4) },
   },
   mounted() {
     if (messages[this.$route.query.message]) {
@@ -92,9 +95,10 @@ export default {
 
       try {
         await this.$store.dispatch('login', formData);
-        this.$router.push('/');
+        await this.$router.push('/');
         // eslint-disable-next-line no-empty
-      } catch (e) { }
+      } catch (e) {
+      }
     },
   },
 };

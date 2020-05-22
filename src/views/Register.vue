@@ -91,12 +91,12 @@ export default {
   }),
   validations: {
     email: { email, required },
-    password: { required, minLength: minLength(8) },
+    password: { required, minLength: minLength(4) },
     name: { required },
     agree: { checked: (v) => v },
   },
   methods: {
-    submitHandler() {
+    async submitHandler() {
       if (this.$v.$invalid) {
         this.$v.$touch();
         return;
@@ -106,8 +106,11 @@ export default {
         password: this.password,
         name: this.name,
       };
-      console.log(formData);
-      this.$router.push('/');
+      try {
+        await this.$store.dispatch('register', formData);
+        await this.$router.push('/');
+        // eslint-disable-next-line no-empty
+      } catch (e) {}
     },
   },
 };
