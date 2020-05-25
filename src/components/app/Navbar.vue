@@ -10,17 +10,12 @@
 
       <ul class="right hide-on-small-and-down">
         <li>
-          <a
-            class="dropdown-trigger black-text"
-            href="#"
-            data-target="dropdown"
-            ref="dropdown"
-          >
+          <a class="dropdown-trigger black-text" href="#" data-target="dropdown" ref="dropdown">
             {{name}}
             <i class="material-icons right">arrow_drop_down</i>
           </a>
 
-          <ul id='dropdown' class='dropdown-content'>
+          <ul id="dropdown" class="dropdown-content">
             <li>
               <router-link to="/profile" class="black-text">
                 <i class="material-icons">account_circle</i>Профиль
@@ -39,9 +34,8 @@
   </nav>
 </template>
 
-<script>
-import M from 'materialize-css';
 
+<script>
 
 export default {
   data: () => ({
@@ -52,7 +46,7 @@ export default {
   methods: {
     async logout() {
       await this.$store.dispatch('logout');
-      await this.$router.push('/login?message=logout');
+      this.$router.push('/login?message=logout');
     },
   },
   computed: {
@@ -64,8 +58,9 @@ export default {
     this.interval = setInterval(() => {
       this.date = new Date();
     }, 1000);
+    // eslint-disable-next-line no-undef
     this.dropdown = M.Dropdown.init(this.$refs.dropdown, {
-      constrainWidth: true,
+      constrainWidth: false,
     });
   },
   beforeDestroy() {

@@ -1,13 +1,14 @@
 <template>
   <div>
-    <loader v-if="loading"/>
-    <div v-else class="app-main-layout">
-      <Navbar @click="isOpen= !isOpen"/>
-      <Sidebar v-model="isOpen"/>
+    <Loader v-if="loading" />
+    <div class="app-main-layout" v-else>
+      <Navbar @click="isOpen = !isOpen" />
+
+      <Sidebar v-model="isOpen" />
 
       <main class="app-content" :class="{full: !isOpen}">
         <div class="app-page">
-          <router-view/>
+          <router-view />
         </div>
       </main>
 
@@ -34,6 +35,7 @@ export default {
     if (!Object.keys(this.$store.getters.info).length) {
       await this.$store.dispatch('fetchInfo');
     }
+
     this.loading = false;
   },
   components: {
