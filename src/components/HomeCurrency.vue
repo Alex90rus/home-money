@@ -32,7 +32,7 @@ export default {
   name: 'HomeCurrency',
   props: ['rates', 'date'],
   data: () => ({
-    currencies: ['RUB', 'USD', 'EUR'],
+    currencies: ['USD', 'EUR'],
   }),
 };
 </script>

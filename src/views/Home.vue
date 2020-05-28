@@ -14,7 +14,7 @@
     <div v-else class="row">
       <HomeBill :rates="currency.rates" />
 
-      <HomeCurrency :rates="currency.rates" :date="currency.date" />
+      <HomeCurrency :rates="curRate" :date="currency.date" />
     </div>
   </div>
 </template>
@@ -28,15 +28,23 @@ export default {
   data: () => ({
     loading: true,
     currency: null,
+    curRate: {
+      USD: null,
+      EUR: null,
+    },
   }),
   async mounted() {
     this.currency = await this.$store.dispatch('fetchCurrency');
+    this.curRate.EUR = this.currency.rates.RUB;
+    this.curRate.USD = this.currency.rates.RUB / this.currency.rates.USD;
     this.loading = false;
   },
   methods: {
     async refresh() {
       this.loading = true;
       this.currency = await this.$store.dispatch('fetchCurrency');
+      this.curRate.EUR = this.currency.rates.RUB;
+      this.curRate.USD = this.currency.rates.RUB / this.currency.rates.USD;
       this.loading = false;
     },
   },

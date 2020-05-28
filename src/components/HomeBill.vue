@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     getCurrency(currency) {
-      return (this.base * this.rates[currency]).toFixed(2);
+      return ((this.base * this.rates[currency])).toFixed(2);
     },
   },
 };
