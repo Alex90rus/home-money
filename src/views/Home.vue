@@ -2,9 +2,13 @@
 <template>
   <div>
     <div class="page-title">
-      <h3>Счет</h3>
+      <h3>{{"Bill" | localize}}</h3>
 
-      <button class="btn waves-effect waves-light btn-small" @click="refresh">
+      <button
+        class="btn waves-effect waves-light btn-small"
+        @click="refresh"
+        v-tooltip="localeRuEn"
+      >
         <i class="material-icons">refresh</i>
       </button>
     </div>
@@ -22,9 +26,15 @@
 <script>
 import HomeBill from '../components/HomeBill.vue';
 import HomeCurrency from '../components/HomeCurrency.vue';
+import localizeFilter from '../filters/localize.filter';
 
 export default {
   name: 'home',
+  metaInfo() {
+    return {
+      title: this.$title('Menu_Bill'),
+    };
+  },
   data: () => ({
     loading: true,
     currency: null,
@@ -46,6 +56,11 @@ export default {
       this.curRate.EUR = this.currency.rates.RUB;
       this.curRate.USD = this.currency.rates.RUB / this.currency.rates.USD;
       this.loading = false;
+    },
+  },
+  computed: {
+    localeRuEn() {
+      return localizeFilter('Update');
     },
   },
   components: {

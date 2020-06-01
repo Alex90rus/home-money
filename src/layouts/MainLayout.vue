@@ -16,7 +16,7 @@
         <router-link
           class="btn-floating btn-large blue"
           to="/record"
-          v-tooltip="'Создать новую запись'">
+          v-tooltip="localeRuEn">
           <i class="large material-icons">add</i>
         </router-link>
       </div>
@@ -28,6 +28,7 @@
 import Navbar from '../components/app/Navbar.vue';
 import Sidebar from '../components/app/Sidebar.vue';
 import messages from '../utils/messages';
+import localizeFilter from '../filters/localize.filter';
 
 export default {
   name: 'main-layout',
@@ -47,6 +48,9 @@ export default {
     Sidebar,
   },
   computed: {
+    localeRuEn() {
+      return localizeFilter('CreateNewRecord');
+    },
     error() {
       return this.$store.getters.error;
     },
