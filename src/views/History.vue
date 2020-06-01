@@ -1,43 +1,135 @@
 <template>
   <div>
     <div class="page-title">
-      <h3>История записей</h3>
+      <h3>{{'History_Title' | localize}}</h3>
     </div>
 
     <div class="history-chart">
-      <canvas></canvas>
+      <canvas ref="canvas"></canvas>
     </div>
+    <loader v-if="loading" />
 
-    <section>
-      <table>
-        <thead>
-        <tr>
-          <th>#</th>
-          <th>Сумма</th>
-          <th>Дата</th>
-          <th>Категория</th>
-          <th>Тип</th>
-          <th>Открыть</th>
-        </tr>
-        </thead>
+    <p class="center" v-else-if="!records.length">
+      {{'NoRecords' | localize}}
+      <router-link to="/record">{{"AddFirst" | localize}}</router-link>
+    </p>
 
-        <tbody>
-        <tr>
-          <td>1</td>
-          <td>1212</td>
-          <td>12.12.32</td>
-          <td>name</td>
-          <td>
-            <span class="white-text badge red">Расход</span>
-          </td>
-          <td>
-            <button class="btn-small btn">
-              <i class="material-icons">open_in_new</i>
-            </button>
-          </td>
-        </tr>
-        </tbody>
-      </table>
+
+    <section v-else>
+      <HistoryTable :records="items" />
+      <Paginate
+        v-model="page"
+        :page-count="pageCount"
+        :click-handler="pageChangeHandler"
+        :prev-text="'Back' | localize"
+        :next-text="'Forward' | localize"
+        :container-class="'pagination center'"
+        :page-class="'waves-effect'"
+        :active-class="'active orange lighten-1'"
+      >
+      </Paginate>
     </section>
+
+
   </div>
 </template>
+
+<script>
+import { Doughnut } from 'vue-chartjs';
+import paginationMixin from '../mixins/pagination.mixin';
+import HistoryTable from '../components/HistoryTable.vue';
+import localizeFilter from '../filters/localize.filter';
+
+
+export default {
+  name: 'history',
+  metaInfo() {
+    return {
+      title: this.$title('Menu_History'),
+    };
+  },
+  extends: Doughnut,
+  mixins: [paginationMixin],
+  data() {
+    return ({
+      loading: true,
+      records: [],
+    });
+  },
+  async mounted() {
+    this.records = await this.$store.dispatch('fetchRecords');
+    const categories = await this.$store.dispatch('fetchCategories');
+    this.setup(categories);
+    this.loading = false;
+  },
+  watch: {
+    $route(to) {
+      if (!to.query.page) {
+        this.pageChangeHandler(1);
+        this.page = 1;
+      }
+    },
+  },
+  methods: {
+    setup(categories) {
+      this.setupPagination(this.records.map((record) => ({
+        ...record,
+        categoryName: categories.find((c) => c.id === record.categoryId).title,
+        typeClass: record.type === 'income' ? 'green' : 'red',
+        typeText: record.type === 'income' ? localizeFilter('Income') : localizeFilter('Outcome'),
+      })));
+
+      this.renderChart({
+        labels: categories.map((c) => c.title),
+        datasets: [{
+          label: localizeFilter('CostsForCategories'),
+          data: categories.map((c) => this.records.reduce((total, r) => {
+            if (r.categoryId === c.id && r.type === 'outcome') {
+              // eslint-disable-next-line no-param-reassign
+              total += +r.amount;
+            }
+            return total;
+          }, 0)),
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)',
+            'rgba(255, 159, 64, 0.2)',
+            'rgba(39, 255, 20, 0.2)',
+            'rgba(255, 0, 248, 0.2)',
+            'rgba(255, 0, 21, 0.2)',
+            'rgba(0, 239, 255, 0.2)',
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)',
+            'rgba(255, 159, 64, 1)',
+            'rgba(39, 255, 20, 1)',
+            'rgba(255, 0, 248, 1)',
+            'rgba(255, 0, 21, 1)',
+            'rgba(0, 239, 255, 1)',
+          ],
+          borderWidth: 1,
+        }],
+      });
+    },
+  },
+  components: {
+    HistoryTable,
+
+  },
+  computed: {
+    localeIncome() {
+      return localizeFilter('Income');
+    },
+    localeOutcome() {
+      return localizeFilter('Outcome');
+    },
+  },
+};
+</script>
